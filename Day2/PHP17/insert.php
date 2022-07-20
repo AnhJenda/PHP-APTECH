@@ -26,6 +26,9 @@ if (!empty($_POST['title'])){
 if (!empty($_POST['ISBN'])){
     $ISBN = $_POST['ISBN'];
 }
+if (!empty($_POST['pub_year'])){
+    $pub_year = $_POST['pub_year'];
+}
 if (!empty($_POST['available'])){
     $available = $_POST['available'];
 };

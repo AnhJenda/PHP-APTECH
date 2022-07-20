@@ -1,18 +1,34 @@
 <html>
 <body>
 <?php
+$name = '';
+if (!empty($_POST['name'])){
+    $name = $_POST['name'];
+    echo "Finding record, {$_POST['name']}, and Result";
+}
+?>
+<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
+    Enter Student Name : <input type="text" name="name">
+    <input type="submit" value="Search">
+</form>
+<?php
 $myDB = new mysqli('localhost', 'root', '', 'testphpdb');
 if ($myDB -> connect_errno){
     die('Connect Error (' . $myDB ->connect_errno . ')' . $myDB -> connect_errno);
 }
-$sqlstm = "Select * from students inner join parents on students.id = parents.id";
+if ($name != ''){
+    $sqlstm = "Select * From students INNER JOIN parents on students.id = parents.id WHERE students.name like '%{$name}%'";
+} else {
+    $sqlstm = "Select * From students INNER JOIN parents on students.id = parents.id";
+}
+echo $sqlstm;
 $result = $myDB -> query($sqlstm);
 ?>
 <table cellpadding=" 2" cellspacing="6" align="center" border="1" >
 
     <tr>
         <td colspan="4">
-            <h3 align="center">Student info</h3>
+            <h3 align="center">Search Result</h3>
         </td>
     </tr>
 
