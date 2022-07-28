@@ -2,8 +2,8 @@
 // Include config file
 require_once 'config.php';
 // define variables and initialize with empty values
-$name = $address = $salary = "";
-$name_err = $salary_err = $address_err = "";
+$name = $address = $class = "";
+$name_err = $class_err = $address_err = "";
 // processing form data when form is submitted
 if (isset($_POST["id"]) && !empty($_POST["id"])){
     // Get hidden input value
@@ -24,29 +24,26 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
     }else{
         $address=$input_address;
     }
-    // Validate salary
-    $input_salary = trim($_POST["salary"]);
-    if(empty($input_salary)){
-        $salary_err = "Please enter the salary amount.";
-    }elseif(!ctype_digit($input_salary)){
-        $salary_err='Please enter a positive integer value.';
+    // validate class
+    $input_class = trim($_POST["class"]);
+    if(empty($input_class)){
+        $class_err = "Please enter the class.";
     }else{
-        $salary=$input_salary;
+        $class=$input_class;
     }
-
     // Check input errors before inserting in database
-    if(empty($name_err) && empty($address_err) && empty($salary_err)){
+    if(empty($name_err) && empty($address_err) && empty($class_err)){
         // Prepare an insert statement
-        $sql = "UPDATE employees SET name = ?, address = ?, salary = ? WHERE id = ?";
+        $sql = "UPDATE students SET name = ?, address = ?, class = ? WHERE id = ?";
 
         if($stmt = mysqli_prepare($link, $sql)) {
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "sssi", $param_name, $param_address, $param_class, $param_id);
             // Set parameters
             $param_name = $name;
             $param_address = $address;
-            $param_salary = $salary;
+            $param_class = $class;
             $param_id = $id;
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sssi", $param_name, $param_address, $param_salary, $param_id);
             // Attempt to execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
                 // Records updated successfully.Redirect to landing page
@@ -67,7 +64,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
         // Get URL parameter
         $id = trim($_GET["id"]);
         // Prepare a select statement
-        $sql = " SELECT * FROM employees WHERE id=?";
+        $sql = " SELECT * FROM students WHERE id=?";
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "i", $param_id);
@@ -83,7 +80,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
                     // Retrieve individual field value
                     $name = $row["name"];
                     $address = $row["address"];
-                    $salary = $row["salary"];
+                    $class = $row["class"];
                 } else {
                     // URL doesn't contain valid id.Redirect to error page
                     header("location : error.php");
@@ -118,37 +115,37 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header">
-                        <h2>Update Record</h2>
-                    </div>
-                    <p>Please fill the form and submit to add the employee to database</p>
-                    <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
-                        <div class="form-group <?php echo(!empty($name_err)) ? 'has-error' : ''; ?>">
-                            <label>Name</label>
-                            <input type="text" name="name" class="form-control" value="<?php echo $name ;?>">
-                            <span class="help-block"><?php echo $name_err;?></span>
-                        </div>
-                        <div class="form-group <?php echo(!empty($address_err)) ? 'has-error' : ''; ?>">
-                            <label>Address</label>
-                            <textarea name="address" class="form-control"><?php echo $address; ?></textarea>
-                            <span class="help-block"><?php echo $address_err;?></span>
-                        </div>
-                        <div class="form-group <?php echo(!empty($salary_err)) ? 'has-error' : ''; ?>">
-                            <label>Salary</label>
-                            <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
-                            <span class="help-block"><?php echo $salary_err;?></span>
-                        </div>
-                        <input type="hidden" name="id" value="<?php echo $id; ?>">
-                        <input type="submit" class="btn btn-primary" value="Submit">
-                        <a href="index.php" class="btn btn-default"> Cancel </a>
-                    </form>
+<div class="wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Update Record</h2>
                 </div>
+                <p>Please fill the form and submit to add the employee to database</p>
+                <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
+                    <div class="form-group <?php echo(!empty($name_err)) ? 'has-error' : ''; ?>">
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" value="<?php echo $name ;?>">
+                        <span class="help-block"><?php echo $name_err;?></span>
+                    </div>
+                    <div class="form-group <?php echo(!empty($address_err)) ? 'has-error' : ''; ?>">
+                        <label>Address</label>
+                        <textarea name="address" class="form-control"><?php echo $address; ?></textarea>
+                        <span class="help-block"><?php echo $address_err;?></span>
+                    </div>
+                    <div class="form-group <?php echo(!empty($class_err)) ? 'has-error' : ''; ?>">
+                        <label>Class</label>
+                        <input type="text" name="class" class="form-control" value="<?php echo $class; ?>">
+                        <span class="help-block"><?php echo $class_err;?></span>
+                    </div>
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <a href="index.php" class="btn btn-default"> Cancel </a>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

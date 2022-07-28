@@ -3,11 +3,12 @@
 require_once 'config.php';
 
 //Khai báo các biến rỗng
-$name = $address = $salary = "";
-$name_err = $address_err = $salary_err = "";
+$name = $address = $class = "";
+$name_err = $address_err = $class_err = "";
 
 // Lấy dữ liệu từ form
 if($_SERVER["REQUEST_METHOD"] == "POST") {
+
 //Validate name
     $input_name = trim($_POST["name"]);
     if (empty($input_name)) {
@@ -26,26 +27,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $address = $input_address;
     }
 
-//Validate salary
-    $input_salary = trim($_POST["salary"]);
-    if (empty($input_salary)) {
-        $salary_err = "Please enter a salary.";
-    } elseif (!ctype_digit($input_salary)) {
-        $salary_err = 'Please enter a positive integer value';
-    } else {
-        $salary = $input_salary;
+//Validate class
+    $input_class = trim($_POST["class"]);
+    if (empty($input_class)) {
+        $class_err = "Please enter a class.";
+    }else {
+        $class = $input_class;
     }
 
 //Kiểm tra lỗi sau khi nhập vào database
-    if (empty($name_err) && empty($address_err) && empty($salary_err)) {
+    if (empty($name_err) && empty($address_err) && empty($class_err)) {
         //Câu lệnh prepare insert
-        $sql = "INSERT INTO employees(name, address, salary) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO students(name, address, class) VALUES (?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
             $param_name = $name;
             $param_address = $address;
-            $param_salary = $salary;
-            mysqli_stmt_bind_param($stmt, "ssi", $param_name, $param_address, $param_salary);
+            $param_class = $class;
+            mysqli_stmt_bind_param($stmt, "sss", $param_name, $param_address, $param_class);
 
             if (mysqli_stmt_execute($stmt)) {
                 header("location: index.php");
@@ -81,7 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="page-header">
                     <h2>Create Record</h2>
                 </div>
-                <p>Please fill in this form and submit to add employee record to database.</p>
+                <p>Please fill in this form and submit to add student record to database.</p>
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
                     <div class="form-group <?php echo (!empty($name_err)) ? 'has-error' : ''; ?>">
                         <label>Name</label>
@@ -93,10 +92,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" name="address" class="form-control" value="<?php echo $address; ?>">
                         <span class="help-block"><?php echo $address_err; ?></span>
                     </div>
-                    <div class="form-group <?php echo (!empty($salary_err)) ? 'has-error' : ''; ?>">
-                        <label>Salary</label>
-                        <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
-                        <span class="help-block"><?php echo $salary_err; ?></span>
+                    <div class="form-group <?php echo (!empty($class_err)) ? 'has-error' : ''; ?>">
+                        <label>Class</label>
+                        <input type="text" name="class" class="form-control" value="<?php echo $class; ?>">
+                        <span class="help-block"><?php echo $class_err; ?></span>
                     </div>
                     <input type="submit" class="btn btn-primary" value="Submit">
                     <a href="index.php" class="btn btn-primary">Cancel</a>
