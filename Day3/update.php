@@ -3,7 +3,7 @@
 require_once 'config.php';
 // define variables and initialize with empty values
 $name = $address = $salary = "";
-$name_err = $salary_err = $address_arr = "";
+$name_err = $salary_err = $address_err = "";
 // processing form data when form is submitted
 if (isset($_POST["id"]) && !empty($_POST["id"])){
     // Get hidden input value
@@ -29,7 +29,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
     if(empty($input_salary)){
         $salary_err = "Please enter the salary amount.";
     }elseif(!ctype_digit($input_salary)){
-        $salary_err='Please enterapositive integer value.';
+        $salary_err='Please enter a positive integer value.';
     }else{
         $salary=$input_salary;
     }
@@ -41,7 +41,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
 
         if($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sssi", $param_name, $param_address, $param_salary, $param_id);
+            mysqli_stmt_bind_param($stmt, "ssi", $param_name, $param_address, $param_salary, $param_id);
             // Set parameters
             $param_name = $name;
             $param_address = $address;
@@ -51,7 +51,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
             // Attempt to execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
                 // Records updated successfully.Redirect to landing page
-                header("location:index.php");
+                header("location: index.php");
                 exit();
             } else {
                 echo "Something went wrong.Please try again later.";
@@ -67,7 +67,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
     if(isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
         // Get URL parameter
         $id = trim($_GET["id"]);
-        // Prepareaselect statement
+        // Prepare a select statement
         $sql = " SELECT * FROM employees WHERE id=?";
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
@@ -109,10 +109,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://maxcdn/bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <title>Update Record</title>
     <style type="text/css">
         .wrapper{
@@ -128,27 +125,28 @@ if (isset($_POST["id"]) && !empty($_POST["id"])){
                 <div class="col-md-12">
                     <div class="page-header">
                         <h2>Update Record</h2>
-                        <p>Please fill the form and submit to add the employee to database</p>
-                        <form action="<?php echo htmlspecialchars($_SERVER(["REQUEST_URI"]));?>" method="post">
-                            <div class="form-group <?php echo(!empty($name_err)) ? 'has-error' : ''; ?>">
-                                <label>Name</label>
-                                <input type="text" name="name" class="form-control" value="<?php echo $name ;?>">
-                                <span class="help-block"><?php echo $name_err;?></span>
-                            </div>
-                            <div class="form-group <?php echo(!empty($address_err)) ? 'has-error' : ''; ?>">
-                                <label>Address</label>
-                                <textarea name="address" class="form-control"><?php echo $address; ?></textarea>
-                                <span class="help-block"><?php echo $address_err;?></span>
-                            </div>
-                            <div class="form-group <?php echo(!empty($salary_err)) ? 'has-error' : ''; ?>">
-                                <label>Salary</label>
-                                <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
-                                <span class="help-block"><?php echo $salary_err;?></span>
-                            </div>
-                            <input type="submit" class="btn btn-primary" value="Submit">
-                            <a href="index.php" class="btn btn-default"> Cancel </a>
-                        </form>
                     </div>
+                    <p>Please fill the form and submit to add the employee to database</p>
+                    <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
+                        <div class="form-group <?php echo(!empty($name_err)) ? 'has-error' : ''; ?>">
+                            <label>Name</label>
+                            <input type="text" name="name" class="form-control" value="<?php echo $name ;?>">
+                            <span class="help-block"><?php echo $name_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo(!empty($address_err)) ? 'has-error' : ''; ?>">
+                            <label>Address</label>
+                            <textarea name="address" class="form-control"><?php echo $address; ?></textarea>
+                            <span class="help-block"><?php echo $address_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo(!empty($salary_err)) ? 'has-error' : ''; ?>">
+                            <label>Salary</label>
+                            <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
+                            <span class="help-block"><?php echo $salary_err;?></span>
+                        </div>
+                        <input type="hidden" name="id" value="<?php echo $id; ?>">
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <a href="index.php" class="btn btn-default"> Cancel </a>
+                    </form>
                 </div>
             </div>
         </div>

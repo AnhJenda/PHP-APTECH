@@ -14,7 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $input_name = trim($_POST["name"]);
     if (empty($input_name)) {
         $name_err = "Please enter a name.";
-    } elseif (!filter_var(trim($_POST["name"]), FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/^[a-zA-Z'-.\s ]+$")))) {
+    } elseif (!filter_var(trim($_POST["name"]), FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/^[a-zA-Z'-.\s ]+$/")))) {
         $name_err = 'Please enter valid name.';
     } else {
         $name = $input_name;
@@ -22,7 +22,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 //Validate address
     $input_address = trim($_POST["address"]);
-    if (!empty($input_address)) {
+    if (empty($input_address)) {
         $address_err = 'Please enter a address.';
     } else {
         $address = $input_address;
@@ -30,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 //Validate salary
     $input_salary = trim($_POST["salary"]);
-    if (!empty($input_salary)) {
+    if (empty($input_salary)) {
         $salary_err = "Please enter a salary.";
     } elseif (!ctype_digit($input_salary)) {
         $salary_err = 'Please enter a positive integer value';
@@ -44,14 +44,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "INSERT INTO employees(name, address, salary) VALUES (?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "sssi", $param_name, $param_address, $param_salary);
-
-            //Truyền vào các kiểu dữ liệu
             $param_name = $name;
             $param_address = $address;
             $param_salary = $salary;
+            mysqli_stmt_bind_param($stmt, "ssi", $param_name, $param_address, $param_salary);
 
-            if (mysqli_stmt_prepare($stmt)) {
+            if (mysqli_stmt_execute($stmt)) {
                 header("location: index.php");
                 exit();
             } else {
@@ -93,13 +91,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                         <span class="help-block"><?php echo $name_err; ?></span>
                     </div>
                     <div class="form-group <?php echo (!empty($address_err)) ? 'has-error' : ''; ?>">
-                        <label>Name</label>
-                        <input type="text" name="name" class="form-control" value="<?php echo $address; ?>">
+                        <label>Address</label>
+                        <input type="text" name="address" class="form-control" value="<?php echo $address; ?>">
                         <span class="help-block"><?php echo $address_err; ?></span>
                     </div>
                     <div class="form-group <?php echo (!empty($salary_err)) ? 'has-error' : ''; ?>">
-                        <label>Name</label>
-                        <input type="text" name="name" class="form-control" value="<?php echo $salary; ?>">
+                        <label>Salary</label>
+                        <input type="text" name="salary" class="form-control" value="<?php echo $salary; ?>">
                         <span class="help-block"><?php echo $salary_err; ?></span>
                     </div>
                     <input type="submit" class="btn btn-primary" value="Submit">
